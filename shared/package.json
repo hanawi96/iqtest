@@ -1,0 +1,26 @@
+{
+  "name": "@testiq/shared",
+  "version": "1.0.0",
+  "description": "🌐 TestIQ Shared - Types, Utils, Constants",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "^5.2.2"
+  },
+  "keywords": [
+    "testiq",
+    "shared",
+    "types",
+    "utils",
+    "constants"
+  ],
+  "author": "TestIQ Team",
+  "license": "MIT"
+}

@@ -1,0 +1,29 @@
+{
+  "name": "@testiq/frontend",
+  "version": "1.0.0",
+  "description": "🎨 TestIQ Frontend - Next.js 15 + TypeScript + Tailwind",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "next": "14.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "@testiq/shared": "file:../shared"
+  },
+  "devDependencies": {
+    "@types/node": "^20.8.0",
+    "@types/react": "^18.2.25",
+    "@types/react-dom": "^18.2.11",
+    "typescript": "^5.2.2",
+    "tailwindcss": "^3.3.5",
+    "postcss": "^8.4.31",
+    "autoprefixer": "^10.4.16",
+    "@tailwindcss/typography": "^0.5.10"
+  }
+}

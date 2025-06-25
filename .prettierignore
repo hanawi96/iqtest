@@ -1,0 +1,62 @@
+# Dependencies
+node_modules/
+package-lock.json
+yarn.lock
+
+# Build outputs
+dist/
+build/
+.next/
+out/
+coverage/
+
+# Logs
+*.log
+
+# Database
+*.sqlite
+*.sqlite3
+*.db
+
+# Environment variables
+.env*
+
+# IDE
+.vscode/
+.idea/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+
+# Generated files
+*.d.ts
+!src/**/*.d.ts
+
+# Config files that should maintain their formatting
+*.config.js
+*.config.ts
+next.config.js
+tailwind.config.js
+postcss.config.js
+
+# Markdown files with specific formatting
+CHANGELOG.md
+LICENSE
+
+# Assets
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+*.svg
+*.ico
+
+# Documentation with special formatting
+docs/api/
+*.api.md 

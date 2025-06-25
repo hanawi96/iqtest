@@ -1,0 +1,101 @@
+{
+  "name": "testiq-workspace",
+  "version": "1.0.0",
+  "description": "🧠 Website Test IQ - Thông minh, Nhanh, Chính xác",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend",
+    "shared",
+    "analytics"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && npm run start:dev",
+    "build": "npm run build:shared && npm run build:frontend && npm run build:backend",
+    "build:shared": "cd shared && npm run build",
+    "build:frontend": "cd frontend && npm run build",
+    "build:backend": "cd backend && npm run build",
+    "test": "npm run test:frontend && npm run test:backend",
+    "test:frontend": "cd frontend && npm run test",
+    "test:backend": "cd backend && npm run test",
+    "setup": "npm install && npm run setup:frontend && npm run setup:backend && npm run setup:shared && npm run setup:analytics",
+    "setup:frontend": "cd frontend && npm install",
+    "setup:backend": "cd backend && npm install",
+    "setup:shared": "cd shared && npm install",
+    "setup:analytics": "cd analytics && npm install",
+    "clean": "npm run clean:frontend && npm run clean:backend && npm run clean:shared && npm run clean:analytics",
+    "clean:frontend": "cd frontend && rm -rf .next node_modules",
+    "clean:backend": "cd backend && rm -rf dist node_modules",
+    "clean:shared": "cd shared && rm -rf dist node_modules",
+    "clean:analytics": "cd analytics && rm -rf dist node_modules",
+    "docker:up": "docker-compose -f deploy/docker/docker-compose.yml up -d",
+    "docker:down": "docker-compose -f deploy/docker/docker-compose.yml down",
+    "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
+    "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
+    "lint:frontend": "cd frontend && npm run lint",
+    "lint:backend": "cd backend && npm run lint",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "type-check": "tsc --noEmit",
+    "prepare": "husky install",
+    "commit": "git-cz"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^17.7.1",
+    "@commitlint/config-conventional": "^17.7.0",
+    "@typescript-eslint/eslint-plugin": "^6.7.0",
+    "@typescript-eslint/parser": "^6.7.0",
+    "commitizen": "^4.3.0",
+    "concurrently": "^8.2.0",
+    "cross-env": "^7.0.3",
+    "cz-conventional-changelog": "^3.3.0",
+    "eslint": "^8.50.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.0",
+    "husky": "^8.0.3",
+    "lint-staged": "^14.0.1",
+    "nodemon": "^3.0.1",
+    "prettier": "^3.0.3",
+    "typescript": "^5.8.3"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,yml,yaml}": [
+      "prettier --write"
+    ]
+  },
+  "keywords": [
+    "iq-test",
+    "intelligence",
+    "psychology",
+    "gamification",
+    "nextjs",
+    "nestjs",
+    "postgresql",
+    "redis"
+  ],
+  "author": "TestIQ Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/testiq/testiq-platform"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "dependencies": {
+    "@types/node": "^24.0.4",
+    "@types/react": "^19.1.8"
+  }
+}
