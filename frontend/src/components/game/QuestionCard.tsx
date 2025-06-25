@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Question, QuestionType } from '@testiq/shared';
 import { getDifficultyColor } from '@testiq/shared';
 
@@ -12,156 +12,269 @@ interface QuestionCardProps {
   timeLeft: number;
 }
 
-export default function QuestionCard({ 
-  question, 
-  questionNumber, 
-  totalQuestions, 
+export default function QuestionCard({
+  question,
+  questionNumber,
+  totalQuestions,
   onAnswer,
-  timeLeft 
+  timeLeft,
 }: QuestionCardProps) {
-  const [selectedAnswer, setSelectedAnswer] = useState<string | number | null>(null);
-  const [showAnimation, setShowAnimation] = useState(false);
+  const [selectedAnswer, setSelectedAnswer] = useState<string | number | null>(
+    null
+  );
+  const [showTransition, setShowTransition] = useState(false);
+  const [inputValue, setInputValue] = useState('');
 
-  const handleAnswerSelect = (answer: string | number) => {
-    setSelectedAnswer(answer);
-    setShowAnimation(true);
-    
-    // Delay để hiện animation
-    setTimeout(() => {
-      onAnswer(answer);
-      setShowAnimation(false);
-      setSelectedAnswer(null);
-    }, 300);
-  };
+  const handleAnswerSelect = useCallback(
+    (answer: string | number) => {
+      if (showTransition) return;
+
+      setSelectedAnswer(answer);
+      setShowTransition(true);
+
+      setTimeout(() => {
+        onAnswer(answer);
+        setShowTransition(false);
+        setSelectedAnswer(null);
+        setInputValue('');
+      }, 600);
+    },
+    [onAnswer, showTransition]
+  );
+
+  const handleInputSubmit = useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === 'Enter' && inputValue.trim()) {
+        handleAnswerSelect(inputValue.trim());
+      }
+    },
+    [inputValue, handleAnswerSelect]
+  );
 
   const difficultyColor = getDifficultyColor(question.difficulty);
   const isTimeWarning = timeLeft <= 10;
+  const progressPercentage = (questionNumber / totalQuestions) * 100;
 
   return (
-    <div className="bg-white rounded-xl shadow-soft p-8 max-w-4xl mx-auto animate-fade-in">
+    <div className="w-full max-w-5xl mx-auto animate-fade-in">
       {/* Question Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center space-x-4">
-          <div className="text-sm text-gray-500">
-            Câu {questionNumber}/{totalQuestions}
-          </div>
-          <div 
-            className="px-3 py-1 rounded-full text-xs font-medium text-white"
-            style={{ backgroundColor: difficultyColor }}
-          >
-            Level {question.difficulty}
-          </div>
-          <div className="px-3 py-1 bg-gray-100 rounded-full text-xs text-gray-600">
-            {question.category.replace('_', ' ')}
-          </div>
-        </div>
-        
-        <div className={`text-lg font-mono font-bold ${isTimeWarning ? 'text-red-500 animate-pulse' : 'text-gray-700'}`}>
-          {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
-        </div>
-      </div>
+      <div className="card-glass p-6 mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 text-sm text-neutral-600">
+              <div className="w-8 h-8 rounded-lg bg-primary-100 flex items-center justify-center text-primary-700 font-bold text-sm">
+                {questionNumber}
+              </div>
+              <span>của {totalQuestions}</span>
+            </div>
 
-      {/* Progress Bar */}
-      <div className="w-full bg-gray-200 rounded-full h-2 mb-8">
-        <div 
-          className="bg-primary-500 h-2 rounded-full transition-all duration-500"
-          style={{ width: `${(questionNumber / totalQuestions) * 100}%` }}
-        />
+            <div
+              className="px-3 py-1.5 rounded-full text-xs font-semibold text-white shadow-soft"
+              style={{ backgroundColor: difficultyColor }}
+            >
+              Level {question.difficulty}
+            </div>
+
+            <div className="px-3 py-1.5 bg-neutral-100 rounded-full text-xs font-medium text-neutral-700">
+              {question.category.replace('_', ' ')}
+            </div>
+          </div>
+
+          <div
+            className={`
+            font-mono font-bold text-lg transition-colors duration-200
+            ${isTimeWarning ? 'text-red-600 animate-pulse' : 'text-neutral-700'}
+          `}
+          >
+            {Math.floor(timeLeft / 60)}:
+            {(timeLeft % 60).toString().padStart(2, '0')}
+          </div>
+        </div>
+
+        {/* Enhanced Progress Bar */}
+        <div className="progress-bar h-2">
+          <div
+            className="progress-fill animate-progress"
+            style={{ width: `${progressPercentage}%` }}
+          />
+        </div>
+
+        <div className="flex justify-between text-xs text-neutral-500 mt-1">
+          <span>Tiến độ</span>
+          <span>{Math.round(progressPercentage)}%</span>
+        </div>
       </div>
 
       {/* Question Content */}
-      <div className="mb-8">
-        <div className="text-xl font-medium text-gray-900 mb-4 leading-relaxed">
-          {question.content}
-        </div>
-        
-        {/* Question specific rendering based on type */}
-        {question.type === QuestionType.MULTIPLE_CHOICE && question.options && (
-          <div className="space-y-3">
-            {question.options.map((option, index) => (
-              <button
-                key={index}
-                onClick={() => handleAnswerSelect(option)}
-                disabled={showAnimation}
-                className={`w-full p-4 text-left rounded-lg border-2 transition-all duration-200 ${
-                  selectedAnswer === option
-                    ? 'border-primary-500 bg-primary-50 scale-105'
-                    : 'border-gray-200 hover:border-primary-300 hover:bg-gray-50'
-                } ${showAnimation ? 'pointer-events-none' : ''}`}
-              >
-                <div className="flex items-center space-x-3">
-                  <div className="w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center text-sm font-medium">
-                    {String.fromCharCode(65 + index)}
-                  </div>
-                  <div>{option}</div>
-                </div>
-              </button>
-            ))}
-          </div>
-        )}
+      <div className="card p-8 hover:shadow-medium transition-shadow duration-300">
+        <div className="mb-8">
+          <h2 className="text-2xl font-semibold text-neutral-800 mb-6 leading-relaxed text-balance">
+            {question.content}
+          </h2>
 
-        {question.type === QuestionType.TRUE_FALSE && (
-          <div className="flex space-x-4">
-            <button
-              onClick={() => handleAnswerSelect('true')}
-              disabled={showAnimation}
-              className={`flex-1 p-6 rounded-lg border-2 transition-all duration-200 ${
-                selectedAnswer === 'true'
-                  ? 'border-success-500 bg-success-50 scale-105'
-                  : 'border-gray-200 hover:border-success-300'
-              }`}
-            >
-              <div className="text-center">
-                <div className="text-3xl mb-2">✅</div>
-                <div className="font-medium">Đúng</div>
-              </div>
-            </button>
-            
-            <button
-              onClick={() => handleAnswerSelect('false')}
-              disabled={showAnimation}
-              className={`flex-1 p-6 rounded-lg border-2 transition-all duration-200 ${
-                selectedAnswer === 'false'
-                  ? 'border-danger-500 bg-danger-50 scale-105'
-                  : 'border-gray-200 hover:border-danger-300'
-              }`}
-            >
-              <div className="text-center">
-                <div className="text-3xl mb-2">❌</div>
-                <div className="font-medium">Sai</div>
-              </div>
-            </button>
-          </div>
-        )}
+          {/* Question Type Specific Rendering */}
+          {question.type === QuestionType.MULTIPLE_CHOICE &&
+            question.options && (
+              <div className="space-y-3">
+                {question.options.map((option, index) => {
+                  const isSelected = selectedAnswer === option;
+                  const letter = String.fromCharCode(65 + index);
 
-        {question.type === QuestionType.FILL_BLANK && (
-          <div className="space-y-4">
-            <input
-              type="text"
-              placeholder="Nhập câu trả lời..."
-              className="w-full p-4 border-2 border-gray-200 rounded-lg focus:border-primary-500 focus:outline-none"
-              onKeyPress={(e) => {
-                if (e.key === 'Enter') {
-                  handleAnswerSelect((e.target as HTMLInputElement).value);
-                }
-              }}
-            />
-            <div className="text-sm text-gray-500">
-              Nhấn Enter để xác nhận câu trả lời
+                  return (
+                    <button
+                      key={index}
+                      onClick={() => handleAnswerSelect(option)}
+                      disabled={showTransition}
+                      className={`
+                      group w-full p-4 text-left rounded-xl border-2 transition-all duration-300
+                      ${
+                        isSelected
+                          ? 'border-primary-500 bg-primary-50 shadow-soft scale-[1.02]'
+                          : 'border-neutral-200 hover:border-primary-300 hover:bg-neutral-50 hover:shadow-soft'
+                      }
+                      ${showTransition ? 'pointer-events-none' : 'hover:-translate-y-0.5'}
+                      disabled:opacity-50
+                    `}
+                    >
+                      <div className="flex items-center gap-4">
+                        <div
+                          className={`
+                        w-8 h-8 rounded-lg border-2 flex items-center justify-center font-bold text-sm transition-all duration-200
+                        ${
+                          isSelected
+                            ? 'border-primary-500 bg-primary-500 text-white'
+                            : 'border-neutral-300 text-neutral-600 group-hover:border-primary-300'
+                        }
+                      `}
+                        >
+                          {letter}
+                        </div>
+                        <div className="text-neutral-800 leading-relaxed">
+                          {option}
+                        </div>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+
+          {question.type === QuestionType.TRUE_FALSE && (
+            <div className="flex gap-4">
+              {[
+                { value: 'true', label: 'Đúng', icon: '✅', color: 'success' },
+                { value: 'false', label: 'Sai', icon: '❌', color: 'danger' },
+              ].map(({ value, label, icon, color }) => {
+                const isSelected = selectedAnswer === value;
+
+                return (
+                  <button
+                    key={value}
+                    onClick={() => handleAnswerSelect(value)}
+                    disabled={showTransition}
+                    className={`
+                      flex-1 p-8 rounded-2xl border-2 transition-all duration-300 hover:-translate-y-1
+                      ${
+                        isSelected
+                          ? `border-${color}-500 bg-${color}-50 shadow-large scale-105`
+                          : `border-neutral-200 hover:border-${color}-300 hover:shadow-soft`
+                      }
+                      ${showTransition ? 'pointer-events-none' : ''}
+                      disabled:opacity-50
+                    `}
+                  >
+                    <div className="text-center">
+                      <div className="text-4xl mb-3">{icon}</div>
+                      <div
+                        className={`font-bold text-lg ${isSelected ? `text-${color}-700` : 'text-neutral-800'}`}
+                      >
+                        {label}
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
             </div>
-          </div>
-        )}
+          )}
+
+          {question.type === QuestionType.FILL_BLANK && (
+            <div className="space-y-6">
+              <div className="relative">
+                <input
+                  type="text"
+                  value={inputValue}
+                  onChange={e => setInputValue(e.target.value)}
+                  onKeyPress={handleInputSubmit}
+                  placeholder="Nhập câu trả lời của bạn..."
+                  className="input text-lg py-4 pr-12"
+                  disabled={showTransition}
+                />
+                <div className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-400">
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13 5l7 7-7 7M5 5l7 7-7 7"
+                    />
+                  </svg>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 text-sm text-neutral-600">
+                <div className="w-2 h-2 bg-primary-500 rounded-full animate-pulse"></div>
+                Nhấn Enter để xác nhận câu trả lời
+              </div>
+
+              {inputValue.trim() && (
+                <button
+                  onClick={() => handleAnswerSelect(inputValue.trim())}
+                  disabled={showTransition}
+                  className="btn-primary px-6 py-3 hover-lift disabled:opacity-50"
+                >
+                  Xác nhận
+                </button>
+              )}
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Animation Overlay */}
-      {showAnimation && (
-        <div className="fixed inset-0 bg-primary-500 bg-opacity-20 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-8 shadow-strong animate-bounce-gentle">
-            <div className="text-4xl text-center mb-4">✨</div>
-            <div className="text-lg font-medium text-center">Đã chọn!</div>
+      {/* Transition Overlay */}
+      {showTransition && (
+        <div className="fixed inset-0 bg-primary-500/10 backdrop-blur-sm flex items-center justify-center z-50 animate-fade-in">
+          <div className="card p-8 animate-scale-in">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce-gentle">
+                <svg
+                  className="w-8 h-8 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              </div>
+              <div className="text-lg font-semibold text-neutral-800 mb-2">
+                Đã chọn!
+              </div>
+              <div className="text-sm text-neutral-600">
+                Chuyển sang câu tiếp theo...
+              </div>
+            </div>
           </div>
         </div>
       )}
     </div>
   );
-} 
+}

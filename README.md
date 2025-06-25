@@ -10,24 +10,28 @@
 ## ✨ Tính Năng Nổi Bật
 
 ### 🎯 **Test IQ Chuyên Nghiệp**
+
 - **60 câu hỏi** trong **25 phút** với phân bố độ khó hình núi
 - **8 lĩnh vực trí tuệ**: Logic thị giác, Logic số học, Ngôn ngữ, Không gian, Trí nhớ, Phán đoán, Giải quyết vấn đề, Tốc độ xử lý
 - **6 mức độ khó** từ dễ đến siêu khó
 - Giao diện test mượt mà với timer và progress bar
 
 ### 🎮 **Gamification System**
+
 - Hệ thống achievement và badges
 - Leaderboard và ranking
 - Social sharing kết quả
 - Surprise bonuses và rewards
 
 ### 📊 **Phân Tích Kết Quả Chi Tiết**
+
 - Điểm IQ chính xác với phân loại level
 - Phân tích theo từng lĩnh vực
 - So sánh với người dùng khác
 - Gợi ý cải thiện cá nhân hóa
 
 ### 🌍 **Đa Ngôn Ngữ**
+
 - Tiếng Việt (mặc định)
 - English
 - Español
@@ -40,17 +44,21 @@
 ## 📱 Screenshots
 
 ### Trang Chủ
+
 ![Homepage](docs/screenshots/homepage.png)
 
 ### Giao Diện Test
+
 ![Test Interface](docs/screenshots/test-interface.png)
 
 ### Kết Quả Phân Tích
+
 ![Results Analysis](docs/screenshots/results.png)
 
 ## 🛠️ Tech Stack
 
 ### Frontend
+
 - **Next.js 15** - React framework với App Router
 - **TypeScript** - Type safety
 - **Tailwind CSS** - Styling
@@ -59,6 +67,7 @@
 - **Recharts** - Data visualization
 
 ### Backend
+
 - **NestJS** - Node.js framework
 - **PostgreSQL** - Primary database
 - **Redis** - Caching & sessions
@@ -67,6 +76,7 @@
 - **Swagger** - API documentation
 
 ### DevOps & Tools
+
 - **Vercel** - Frontend deployment
 - **Railway** - Backend deployment
 - **ESLint & Prettier** - Code quality
@@ -76,6 +86,7 @@
 ## 🏃‍♂️ Quick Start
 
 ### Prerequisites
+
 - Node.js 18+
 - PostgreSQL 14+
 - Redis 6+
@@ -83,23 +94,27 @@
 ### Installation
 
 1. **Clone repository**
+
 ```bash
 git clone https://github.com/hanawi96/iqtest.git
 cd iqtest
 ```
 
 2. **Install dependencies**
+
 ```bash
 npm install
 ```
 
 3. **Setup environment variables**
+
 ```bash
 cp env.example .env
 # Edit .env with your configuration
 ```
 
 4. **Start development servers**
+
 ```bash
 # Start all services
 npm run dev
@@ -147,6 +162,7 @@ testiq/
 ## 🎯 API Endpoints
 
 ### Test Management
+
 ```http
 POST   /api/test/start        # Start new test
 GET    /api/test/:id          # Get test details
@@ -155,6 +171,7 @@ GET    /api/test/:id/result   # Get test results
 ```
 
 ### User Management
+
 ```http
 POST   /api/auth/register     # User registration
 POST   /api/auth/login        # User login
@@ -163,6 +180,7 @@ PUT    /api/auth/profile      # Update profile
 ```
 
 ### Leaderboard
+
 ```http
 GET    /api/leaderboard       # Global rankings
 GET    /api/leaderboard/me    # User's ranking
@@ -200,7 +218,9 @@ npm run test:e2e
 5. Open Pull Request
 
 ### Commit Convention
+
 We use [Conventional Commits](https://www.conventionalcommits.org/):
+
 - `feat:` New features
 - `fix:` Bug fixes
 - `docs:` Documentation
